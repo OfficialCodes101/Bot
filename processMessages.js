@@ -22,7 +22,7 @@ module.exports.processIncomingMessages = async (sock, messageInfoUpsert) => {
             console.log(message);
         
             const prompt_pattern = /^\.(?:\s)?(\w+)(?: ?(.*))?/g;
-            const matches = XRegExp.exec(message, prompt_pattern);
+            const matches = prompt_pattern.exec(message);
         
             if (!matches) {
                 if (msg.key.fromMe) {
@@ -82,6 +82,9 @@ module.exports.processIncomingMessages = async (sock, messageInfoUpsert) => {
                     continue;
                 case 'tagall':
                     await commands.tag(sock, data, 'all');
+                    continue;
+                case 'img':
+                    await commands.img(sock, data, matches[2]);
                     continue;
                 default:
                     await sock.sendMessage(data.key.remoteJid, {
