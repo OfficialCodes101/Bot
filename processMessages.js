@@ -1,5 +1,6 @@
 const XRegExp = require('xregexp');
-const commands = require('./lib/plugins')
+const commands = require('./lib/plugins');
+require('dotenv').config();
 
 
 module.exports.processIncomingMessages = async (sock, messageInfoUpsert) => {
@@ -20,9 +21,13 @@ module.exports.processIncomingMessages = async (sock, messageInfoUpsert) => {
             */
             let message = message_array.filter(element => element !== '').join(' ');
             console.log(message);
-        
-            const prompt_pattern = /^\.(?:\s)?(\w+)(?: ?(.*))?/g;
-            const matches = prompt_pattern.exec(message);
+            
+            if (message[0] !== process.env.PREFIX) {
+                return;
+            }
+            const query = message.slice(1).trim();
+            const prompt_pattern = /(\w+)(?: ?(.*))?/g;
+            const matches = prompt_pattern.exec(query);
         
             if (!matches) {
                 if (msg.key.fromMe) {
@@ -31,7 +36,7 @@ module.exports.processIncomingMessages = async (sock, messageInfoUpsert) => {
                 }
                 continue;
             }
-            console.log(matches);
+
         
             let command = '';
             try {
